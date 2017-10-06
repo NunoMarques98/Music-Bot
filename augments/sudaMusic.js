@@ -7,7 +7,7 @@ module.exports.sudaMusic = function(message){
 
 if(message.content.toLowerCase() === '!playing'){
 
-  return message.reply('Playing at Ordis Radio ' + ytqueque[0]);
+  return message.reply('Playing at Suda Radio ' + ytqueque[0]);
 
 }
 
@@ -37,40 +37,40 @@ if(message.content.toLowerCase() === '!skip' && message.member.id === requester[
 }
 
 
-
-
 if (message.content.toLowerCase().startsWith('!play')){
 
-  var video = message.content.split(" ");
+  if(message.member.voiceChannel){
 
-  console.log(video);  
-
-  if(video.length == 2 && ytqueque.length == 0 ){
-
-    ytqueque.push(video[1].replace("'" , '"'));
-    requester.push(message.member.id);
-
-    play( ytqueque[0], message);
-    //return message.reply("What will you listen?");
+    var video = message.content.split(" ");
     
+      if(video.length == 2 && ytqueque.length == 0 ){
+    
+        ytqueque.push(video[1].replace("'" , '"'));
+        requester.push(message.member.id);
+    
+        play( ytqueque[0], message);
+    
+      }else if(video.length == 2 && ytqueque.length != 0){
+    
+        ytqueque.push(video[1].replace("'" , '"'));
+        return message.reply("Added to queque!");
+    
+      }
+      else{
+        
+        return message.reply("Please enter a link");
+    }
+  }
+  else {
 
-  }else if(video.length == 2 && ytqueque.length != 0){
-
-    ytqueque.push(video[1].replace("'" , '"'));
-    return message.reply("Added to queque!");
+    message.reply("Please be in a voice channel!");
 
   }
-  else{
-    
-    return message.reply("Please enter a link");
 }
 
-}
+};  
 
-
-};
-
- function play(audio, message){
+function play(audio, message){
 
 
     if(message.member != undefined && audio != undefined){
@@ -104,3 +104,4 @@ if (message.content.toLowerCase().startsWith('!play')){
         });
       }
     } 
+
