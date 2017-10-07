@@ -1,4 +1,5 @@
 var ytdl = require('ytdl-core');
+
 var ytqueque = [];
 
 var requester = [];
@@ -37,7 +38,7 @@ if(message.content.toLowerCase() === '!skip' && message.member.id === requester[
 }
 
 
-if (message.content.toLowerCase().startsWith('!play')){
+  if (message.content.toLowerCase().startsWith('!play')){
 
   if(message.member.voiceChannel){
 
@@ -85,7 +86,9 @@ function play(audio, message){
       voiceChannel.join().then(connnection => {
 
         const stream = ytdl(audio, { filter: 'audioonly' });
+
         dispatcher = connnection.playStream(stream);
+
         dispatcher.on('end', () => {
   
           ytqueque.shift();
@@ -98,10 +101,11 @@ function play(audio, message){
           }else{
 
             play(ytqueque[0], message);
+
           }
-          
-          });
+         
         });
-      }
-    } 
+      });
+    }
+  } 
 

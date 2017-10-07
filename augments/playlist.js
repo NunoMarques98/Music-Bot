@@ -9,19 +9,24 @@ module.exports = {
 
         switch(messageReceived[0]){
 
-            case '!plCreate':
+            case '!plRegister':
 
-                createPlaylist(message.author.id, message);
+                createRegister(message.author.id, message);
                 break;
             
-            case '!plAddSong':
+            case '!plAdd':
 
-                addSong(message.author.id, messageReceived, message);
+                addPlaylist(message.author.id, messageReceived, message);
+                break;
+
+            case '!plAddSong':
+                
+                addSongToPl(message.author.id, messageReceived, message);
                 break;
 
             case '!plPlay':
 
-                play(message.author.id, message);
+                play(message.author.id, messageReceived, message);
                 break;
 
             case '!plSkip':
@@ -33,7 +38,7 @@ module.exports = {
 
 }
 
-function createPlaylist(id, message){
+function createRegister(id, message){
 
     suda.Suda.find({userID: id}, function(err, data){
         
@@ -45,51 +50,56 @@ function createPlaylist(id, message){
             
                 if(err) throw err;
             
-                     message.reply(" your playlist has been created");
+                     message.reply(" you have been registered!");
             
                 })
                 
                 }else{
             
-                    message.reply(" you have already a playlist!");
+                    message.reply(" you have already been registered!");
         }
         
     });
 
 }
 
-function addSong(id, song, author){
+function addPlaylist(id, message, author){
 
-    if(song.length === 2){
+    if(message.length === 2){
 
-        suda.Suda.update({userID: id}, {$push : {musics: song[1]}}, function(err){
+        suda.Suda.update({userID: id}, {$push : {musics: {plName: message[1], music: [] }}}, function(err){
 
             if(err) throw err;
         
         });
 
-        author.reply(" your song has been added to the playlist!");
+        author.reply(" your playlist has been created!");
 
     }else{
 
-        author.reply(" you should include a link. For example !plAddSong SongURL");
+        author.reply(" you should include a name. For example !plAdd name");
 
     }
 }
 
-function play(id, message){
+function play(id, messageReceived, message){
 
     suda.Suda.find({userID: id}, function (err, data) {
 
-       var musics = data[0].musics;
+       var elementMusics;
 
-       if(message.member != undefined && musics != undefined){
+       data[0].musics.forEach(function(element) {
+
+            if(element.plName === messageReceived[1]) elementMusics = element.music;
+           
+       }, this)
+
+       if(message.member != undefined && elementMusics != undefined){
 
             if(!message.member.voiceChannel) message.reply(" you must be in a voice channel!");
 
-                playMusic(musics, message);
+                playMusic(elementMusics, message);
        }
-    
     }
   );
 }
@@ -119,6 +129,26 @@ function playMusic(audio, message){
                   
         });
     });
+}
+
+function addSongToPl(id, message, author){
+
+    if(message.length === 3){
+
+        suda.Suda.update({'musics.plName': message[1]}, {'$push' : {'musics.$.music' : message[2] }}, 
+            function(callback){
+
+                })
+        
+        author.reply(`your song  has been added to ${message[1]}!`);
+                
+
+        }else{
+        
+            author.reply(" you should include your playlist name and the url of the song to be added. For example ");
+        
+        }
+
 }
 
 function skip(){
