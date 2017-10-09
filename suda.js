@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://Cinder:cinder@ds153413.mlab.com:53413/usersplaylist');
+mongoose.connect('data base link');
 
 var sudaSchema = new mongoose.Schema({
 
@@ -39,4 +39,4 @@ client.on('message', function(message){
 module.exports.Suda = Suda;
 
 
-client.login('MzYwOTYzNDAwNzgxNzkxMjQz.DKdQtg.1uBNlipi6-B9l7GvI4nPVTYGf6M');
+client.login('your bot token');
