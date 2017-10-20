@@ -6,7 +6,7 @@ const RiveScript = require('rivescript');
 const bot = new RiveScript();
 
 
-mongoose.connect('mongodb://Cinder:cinder@ds153413.mlab.com:53413/usersplaylist');
+mongoose.connect('your db link');
 
 let sudaSchema = new mongoose.Schema({
 
@@ -65,4 +65,4 @@ module.exports.Suda = Suda;
 module.exports.bot = bot;
 
 
-client.login('MzYwOTYzNDAwNzgxNzkxMjQz.DKdQtg.1uBNlipi6-B9l7GvI4nPVTYGf6M');
+client.login('your bot token');
