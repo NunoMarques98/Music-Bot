@@ -39,6 +39,11 @@ module.exports = {
                 displaySongs(message.author.id, messageReceived, message);
                 break;
 
+            case '!plRemove':
+
+                removePlaylist(message.author.id, messageReceived, message);
+                break;
+
         }
     }
 
@@ -178,40 +183,48 @@ function displaySongs(id, messageReceived, author){
 
     suda.Suda.find({userID: id}, function (err, data) {
         
-            let elementMusics = []; 
+         let elementMusics = []; 
 
-               data[0].musics.forEach( function(element) {
+            data[0].musics.forEach( function(element) {
         
-                    if(element.plName === messageReceived[1]){
+                if(element.plName === messageReceived[1]){
         
-                        for(let i = 0; i < element.music.length; i++){
+                    for(let i = 0; i < element.music.length; i++){
         
-                            elementMusics.push(element.music[i].title);
+                        elementMusics.push(element.music[i].title);
         
-                        }
-                    };
+                    }
+                };
 
-               } ,this); 
+            } ,this); 
                
-               console.log(elementMusics)
+            console.log(elementMusics)
 
-               let songList = '```'
+            let songList = '```'
 
-               for(let i = 0; i < elementMusics.length; i++){
+            for(let i = 0; i < elementMusics.length; i++){
 
-                    songList += (i+1) + ' ' + elementMusics[i] + '\n';
-
-               }
-
-               songList += '```';
-
-               author.reply(songList);
+                songList += (i+1) + ' ' + elementMusics[i] + '\n';
 
             }
-           
-        )
-    
-    }
+
+            songList += '```';
+
+            author.reply(songList);
+
+    })  
+}
+
+function removePlaylist(id, messageReceived, author){
+
+    suda.Suda.update({userID: id}, {"$pull": {"musics": {"plName": messageReceived[1]}}}, function(callback){
+
+
+        })
+
+    author.reply(`Your playlist ${messageReceived[1]} was successfully removed!`)
+
+}
 
 
 
