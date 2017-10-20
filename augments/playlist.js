@@ -33,6 +33,11 @@ module.exports = {
             
                 skip();
                 break;
+            
+            case '!plSongs':
+
+                displaySongs(message.author.id, messageReceived, message);
+                break;
 
         }
     }
@@ -87,11 +92,19 @@ function play(id, messageReceived, message){
 
     suda.Suda.find({userID: id}, function (err, data) {
 
-       var elementMusics;
+       let elementMusics = [];
 
-       data[0].musics.forEach(function(element) {
+       data[0].musics.forEach( function(element) {
 
-            if(element.plName === messageReceived[1]) elementMusics = element.music;
+            if(element.plName === messageReceived[1]){
+
+                for(let i = 0; i < element.music.length; i++){
+
+                    elementMusics.push(element.music[i].link);
+
+                }
+
+            };
            
        }, this)
 
@@ -136,11 +149,15 @@ function addSongToPl(id, message, author){
 
     if(message.length === 3){
 
-        suda.Suda.update({'musics.plName': message[1]}, {'$push' : {'musics.$.music' : message[2] }}, 
+        ytdl.getInfo(message[2], (err, info) =>{
+
+            suda.Suda.update({'musics.plName': message[1]}, {'$push' : {'musics.$.music' : {link: message[2], title: info.title  } }}, 
             function(callback){
 
                 })
-        
+
+        })
+
         author.reply(`your song  has been added to ${message[1]}!`);
                 
 
@@ -156,6 +173,45 @@ function skip(){
 
     dispatcher.end();
 }
+
+function displaySongs(id, messageReceived, author){
+
+    suda.Suda.find({userID: id}, function (err, data) {
+        
+            let elementMusics = []; 
+
+               data[0].musics.forEach( function(element) {
+        
+                    if(element.plName === messageReceived[1]){
+        
+                        for(let i = 0; i < element.music.length; i++){
+        
+                            elementMusics.push(element.music[i].title);
+        
+                        }
+                    };
+
+               } ,this); 
+               
+               console.log(elementMusics)
+
+               let songList = '```'
+
+               for(let i = 0; i < elementMusics.length; i++){
+
+                    songList += (i+1) + ' ' + elementMusics[i] + '\n';
+
+               }
+
+               songList += '```';
+
+               author.reply(songList);
+
+            }
+           
+        )
+    
+    }
 
 
 

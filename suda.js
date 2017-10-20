@@ -2,23 +2,28 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const mongoose = require('mongoose');
 
-mongoose.connect('data base link');
+const RiveScript = require('rivescript');
+const bot = new RiveScript();
 
-var sudaSchema = new mongoose.Schema({
+
+mongoose.connect('mongodb://Cinder:cinder@ds153413.mlab.com:53413/usersplaylist');
+
+let sudaSchema = new mongoose.Schema({
 
     userID: Number,
     musics: [{
         plName: String,
-        music: Array,
+        music: [{link: String, title: String}],
     }]
 
 });
 
-var Suda = mongoose.model('Suda', sudaSchema);
+let Suda = mongoose.model('Suda', sudaSchema);
 
-var sudaMusic = require('./augments/sudaMusic');
-var sudaPlaylist = require('./augments/playlist');
-var sudaMessage = require('./augments/sudaMessage');
+let sudaMusic = require('./augments/sudaMusic');
+let sudaPlaylist = require('./augments/playlist');
+let sudaMessage = require('./augments/sudaMessage');
+let sudaIntel = require('./augments/sudaIntel');
 
 client.on('ready', function(){
     
@@ -26,17 +31,38 @@ client.on('ready', function(){
     
       channel = client.channels.find('name', 'Ordis');
       textChannel.send(":diamonds: What are you curious about? :diamonds:");
+
+      bot.loadFile('./sudaIntel.rive', fileRead, fileError );
       
-    })
+})
+
 
 client.on('message', function(message){
       
       sudaMusic.sudaMusic(message);
       sudaPlaylist.recog(message);
       sudaMessage.res(message);
+      sudaIntel.response(message);
+
+      
   });
 
+function fileRead(){
+    
+    console.log("Read successful");
+    bot.sortReplies();
+    
+    }
+    
+function fileError(error){
+    
+    console.log(error)
+    
+    }
+
+
 module.exports.Suda = Suda;
+module.exports.bot = bot;
 
 
-client.login('your bot token');
+client.login('MzYwOTYzNDAwNzgxNzkxMjQz.DKdQtg.1uBNlipi6-B9l7GvI4nPVTYGf6M');

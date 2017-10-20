@@ -1,8 +1,8 @@
-var ytdl = require('ytdl-core');
+let ytdl = require('ytdl-core');
 
-var ytqueque = [];
+let ytqueque = [];
 
-var requester = [];
+let requester = [];
 
 module.exports.sudaMusic = function(message){
 
@@ -78,7 +78,7 @@ function play(audio, message){
 
       const voiceChannel = message.member.voiceChannel;
       audio.replace("'" , '"' );
-    
+
 
     if (!voiceChannel) return message.reply(`Please be in a voice channel first!`);
        

@@ -1,6 +1,6 @@
 
-var existingConnect;
-var channel;
+let existingConnect;
+let channel;
 
 module.exports ={
 
