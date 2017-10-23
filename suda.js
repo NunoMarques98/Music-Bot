@@ -64,4 +64,4 @@ module.exports.Suda = Suda;
 module.exports.bot = bot;
 
 
-client.login('yout bot token');
+client.login('your bot token');
