@@ -29,16 +29,16 @@ if(message.content.toLowerCase() === '!resume'){
     message.reply("Video is not paused");
   }
 
-
 }
 
 if(message.content.toLowerCase() === '!skip' && message.member.id === requester[0]){
-  
+ 
   dispatcher.end();
+
 }
 
 
-  if (message.content.toLowerCase().startsWith('!play')){
+  if (message.content.toLowerCase().startsWith('!play') && !message.member.bot){
 
   if(message.member.voiceChannel){
 
@@ -49,7 +49,7 @@ if(message.content.toLowerCase() === '!skip' && message.member.id === requester[
         ytqueque.push(video[1].replace("'" , '"'));
         requester.push(message.member.id);
     
-        play( ytqueque[0], message);
+        play(ytqueque[0], message);
     
       }else if(video.length == 2 && ytqueque.length != 0){
     
@@ -82,7 +82,6 @@ function play(audio, message){
 
     if (!voiceChannel) return message.reply(`Please be in a voice channel first!`);
        
-
       voiceChannel.join().then(connnection => {
 
         const stream = ytdl(audio, { filter: 'audioonly' });

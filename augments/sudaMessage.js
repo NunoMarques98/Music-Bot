@@ -22,6 +22,11 @@ module.exports ={
                 checkCycle(message);
                 break;
 
+            case "!wfcc":
+
+                checkCycleCetus(message);
+                break;
+
             default:
                 break;
         }
@@ -72,6 +77,21 @@ function checkCycle(message){
 
         message.reply(`It's :earth_africa: night cycle :full_moon: Remaining ${hoursRemaining}:${minutesRemaining}:${secondsRemaining}`)
 
+    }
+
+}
+
+function checkCycleCetus(message){
+
+   let quo = Math.floor((new Date()).getTime() / 1000 + 780) % 9000
+
+    if(quo < 3000) {
+
+        message.reply(`It's Cetus night cycle :full_moon:`);
+
+    } else{
+
+        message.reply(`It's Cetus day cycle :sunny:`);
     }
 
 }

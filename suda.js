@@ -5,8 +5,7 @@ const mongoose = require('mongoose');
 const RiveScript = require('rivescript');
 const bot = new RiveScript();
 
-
-mongoose.connect('your db link');
+mongoose.connect('your mongo db link');
 
 let sudaSchema = new mongoose.Schema({
 
@@ -43,8 +42,8 @@ client.on('message', function(message){
       sudaPlaylist.recog(message);
       sudaMessage.res(message);
       sudaIntel.response(message);
+      sudaIntel.addIntel(message);
 
-      
   });
 
 function fileRead(){
@@ -65,4 +64,4 @@ module.exports.Suda = Suda;
 module.exports.bot = bot;
 
 
-client.login('your bot token');
+client.login('yout bot token');
