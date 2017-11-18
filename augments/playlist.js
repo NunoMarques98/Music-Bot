@@ -34,7 +34,7 @@ module.exports = {
                 skip();
                 break;
             
-            case '!plSongs':
+            case '!plListSongs':
 
                 displaySongs(message.author.id, messageReceived, message);
                 break;
@@ -44,6 +44,15 @@ module.exports = {
                 removePlaylist(message.author.id, messageReceived, message);
                 break;
 
+            case '!plListPl':
+
+                displayPl(message.author.id, message);
+                break;
+
+            case '!plRemoveSong':
+            
+                removeSong(message.author.id, messageReceived, message);
+                break;
         }
     }
 
@@ -181,37 +190,63 @@ function skip(){
 
 function displaySongs(id, messageReceived, author){
 
-    suda.Suda.find({userID: id}, function (err, data) {
+    suda.Suda.findOne({userID: id, 'musics.plName': messageReceived[1]}, (err, data)=>{
+
+        let plPos;
         
-         let elementMusics = []; 
-
-            data[0].musics.forEach( function(element) {
+        for (var i = 0; i < data.musics.length; i++) {
+                    
+            if(data.musics[i].plName === messageReceived[1]) plPos = i;
         
-                if(element.plName === messageReceived[1]){
+        }  
+
+        let songTitles = [];
         
-                    for(let i = 0; i < element.music.length; i++){
+        data.musics[plPos].music.forEach( (musicTitle) => {
+
+            songTitles.push(musicTitle.title);
+
+        })
+
         
-                        elementMusics.push(element.music[i].title);
+        let songList = '```'
         
-                    }
-                };
+        for(let i = 0; i < songTitles.length; i++){
+        
+            songList += (i+1) + ' ' + songTitles[i] + '\n';
 
-            } ,this); 
-               
-            console.log(elementMusics)
+        }
+        
+        songList += '```';
+        
+        author.reply(songList);
 
-            let songList = '```'
+    })  
+}
 
-            for(let i = 0; i < elementMusics.length; i++){
+function displayPl(id, author){
 
-                songList += (i+1) + ' ' + elementMusics[i] + '\n';
+    suda.Suda.find({userID: id}).then( (data) => {
+        
+        let plTitles = [];
+        data[0].musics.forEach( (playlist) => {
 
-            }
+            plTitles.push(playlist.plName);
 
-            songList += '```';
-
-            author.reply(songList);
-
+        })
+                
+        let songList = '```'
+                        
+        for(let i = 0; i < plTitles.length; i++){
+                        
+            songList += (i+1) + ' ' + plTitles[i] + '\n';
+                
+        }
+                        
+        songList += '```';
+                        
+        author.reply(songList);
+                
     })  
 }
 
@@ -222,7 +257,42 @@ function removePlaylist(id, messageReceived, author){
 
         })
 
-    author.reply(`Your playlist ${messageReceived[1]} was successfully removed!`)
+    author.reply(`Your playlist ${messageReceived[1]} was successfully removed!`);
+
+}
+
+function removeSong(id, messageReceived, author){
+
+    suda.Suda.findOne({userID: id, 'musics.plName': messageReceived[1]}, (err, data)=>{
+
+        let plPos;
+
+        for (var i = 0; i < data.musics.length; i++) {
+            
+            if(data.musics[i].plName === messageReceived[1]) plPos = i;
+
+        }
+
+        let songs = [];
+                
+        data.musics[plPos].music.forEach( (music) => {
+        
+            songs.push({link: music.link, title: music.title});
+        
+        })
+
+        let songToRemove = songs[messageReceived[2]-1];
+
+        suda.Suda.update({'musics.plName': messageReceived[1]}, 
+            {'$pull' : {'musics.$.music' : {link: songToRemove.link, title: songToRemove.title}}}, (cb) =>{
+            
+            
+                })
+
+        author.reply(`Song ${songToRemove.title} was successfully removed from ${messageReceived[1]}!`);
+            
+    })
+
 
 }
 
