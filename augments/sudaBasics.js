@@ -1,11 +1,19 @@
 module.exports = class SudaBasics {
 
-  constructor(channel, command, message) {
+  constructor() {
+
+    this.channel;
+    this.message;
+
+}
+
+  handler(command, message, channel){
 
     this.channel = channel;
     this.message = message;
 
     switch (command) {
+
       case "!suda":
 
           this.joinChannel();
@@ -31,12 +39,12 @@ module.exports = class SudaBasics {
 
   joinChannel(){
 
-    this.channel.join().then( function(connection){
+    this.channel.join().then( (connection) => {
 
         const dispatcher = connection.playFile('./assets/voice/CSgoodrank.ogx');
 
     })
-  }
+}
 
   help(){
 
@@ -45,7 +53,7 @@ module.exports = class SudaBasics {
     let help1 = "```py\n#Basic Commands\n '!suda', Summons me to a voice chat\nPage 1```"
     let help = "```py\n#Look at my help pages:\n    Type 1 for basic commands\n    Type 2 for music help\n    Type 3 for playlist help\n    Type stop to exit```"
 
-    this.message.member.createDM().then((channel) =>{
+    this.message.member.createDM().then( (channel) =>{
 
         channel.send(help);
 
@@ -78,8 +86,7 @@ module.exports = class SudaBasics {
             }
         })
     })
-
-  }
+}
 
   wfcc(){
 
@@ -92,6 +99,7 @@ module.exports = class SudaBasics {
      } else{
 
          this.message.reply(`It's Cetus day cycle :sunny:`);
+
      }
   }
 
@@ -120,6 +128,5 @@ module.exports = class SudaBasics {
         this.message.reply(`It's :earth_africa: night cycle :full_moon: Remaining ${hoursRemaining}:${minutesRemaining}:${secondsRemaining}`)
 
     }
-
   }
 }

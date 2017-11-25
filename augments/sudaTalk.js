@@ -3,7 +3,13 @@ let Bot = require('../suda.js');
 
 module.exports = class SudaTalk {
 
-  constructor(message, command) {
+  constructor() {
+
+    this.message;
+
+  }
+
+  handler(command, message){
 
     this.message = message;
 
@@ -16,7 +22,6 @@ module.exports = class SudaTalk {
       this.response();
 
     }
-
   }
 
   response(){
@@ -37,7 +42,7 @@ module.exports = class SudaTalk {
 
                 this.message.reply("```javascript\nSorry, I am not programmed to answer that yet. You can make me more intelligent by using:\n!sudaImp trigger 'key phrase' response 'key response'\n```");
 
-            }else {
+            } else {
 
                  this.message.reply(reply);
 
@@ -77,7 +82,5 @@ module.exports = class SudaTalk {
         console.log(data);
 
     });
-
   }
-
 }

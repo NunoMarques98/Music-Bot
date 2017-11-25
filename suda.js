@@ -1,4 +1,4 @@
-var Message = require('./augments/msgHand');
+let Message = require('./augments/msgHand');
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const RiveScript = require('rivescript');
 const bot = new RiveScript();
 
-mongoose.connect('Your db link');
+mongoose.connect('mongodb://localhost/playlist');
 
 let sudaSchema = new mongoose.Schema({
 
@@ -20,12 +20,11 @@ let sudaSchema = new mongoose.Schema({
 });
 
 let Suda = mongoose.model('Suda', sudaSchema);
+
 let msg = new Message();
 
 let sudaMusic = require('./augments/sudaMusic');
 let sudaPlaylist = require('./augments/playlist');
-let sudaMessage = require('./augments/sudaMessage');
-let sudaIntel = require('./augments/sudaIntel');
 
 client.on('ready', function(){
 
