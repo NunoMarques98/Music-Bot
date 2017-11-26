@@ -1,6 +1,7 @@
 let SudaBasics = require('./sudaBasics.js');
 let SudaTalk = require('./sudaTalk.js');
 let SudaPlaylist = require('./sudaPlaylist.js');
+let SudaMusicHandler = require('./sudaMusicHandler.js');
 
 module.exports = class Message {
 

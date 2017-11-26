@@ -71,9 +71,9 @@ module.exports = class SudaMusicHandler {
 
       case "!plPlay":
 
-        let songInfo = message.content.split(" ");
+        let messageInfo = message.content.split(" ");
 
-        let songList = this.sudaPlaylist.getPlSongs(message.member.id, songInfo, message);
+        let songList = this.sudaPlaylist.getPlSongs(message.member.id, messageInfo, message);
 
 
       break;

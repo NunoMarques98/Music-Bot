@@ -1,4 +1,4 @@
-let Message = require('./augments/msgHand');
+const Message = require('./augments/msgHand');
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
@@ -9,7 +9,18 @@ const bot = new RiveScript();
 
 mongoose.connect('mongodb://localhost/playlist');
 
-let sudaSchema = new mongoose.Schema({
+mongoose.connection.once('open', () => {
+
+  console.log("Connection established!");
+
+}).on('error', (err) => {
+
+  console.log(err);
+
+});
+
+
+/*let sudaSchema = new mongoose.Schema({
 
     userID: Number,
     musics: [{
@@ -19,7 +30,7 @@ let sudaSchema = new mongoose.Schema({
 
 });
 
-let Suda = mongoose.model('Suda', sudaSchema);
+let Suda = mongoose.model('Suda', sudaSchema);*/
 
 let msg = new Message();
 
