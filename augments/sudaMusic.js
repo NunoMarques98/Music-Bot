@@ -38,41 +38,41 @@ if(message.content.toLowerCase() === '!skip' && message.member.id === requester[
 }
 
 
-  if (message.content.toLowerCase().startsWith('!play') && !message.member.bot){
+if (message.content.toLowerCase().startsWith('!play') && !message.member.bot){
 
   if(message.member.voiceChannel){
 
     var video = message.content.split(" ");
     
-      if(video.length == 2 && ytqueque.length == 0 ){
+    if(video.length == 2 && ytqueque.length == 0 ){
     
         ytqueque.push(video[1].replace("'" , '"'));
         requester.push(message.member.id);
     
         play(ytqueque[0], message);
     
-      }else if(video.length == 2 && ytqueque.length != 0){
+    }else if(video.length == 2 && ytqueque.length != 0){
     
         ytqueque.push(video[1].replace("'" , '"'));
         return message.reply("Added to queque!");
     
-      }
-      else{
+    }else{
         
         return message.reply("Please enter a link");
     }
-  }
-  else {
+
+  }else{
 
     message.reply("Please be in a voice channel!");
 
-  }
-}
+    }
 
+  }
+  
 };  
 
 function play(audio, message){
-
+  
 
     if(message.member != undefined && audio != undefined){
 
@@ -101,10 +101,13 @@ function play(audio, message){
 
             play(ytqueque[0], message);
 
-          }
+        }
          
-        });
       });
-    }
-  } 
+
+    });
+
+  }
+
+} 
 

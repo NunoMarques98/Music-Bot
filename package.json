@@ -4,7 +4,7 @@
   "description": "",
   "main": "suda.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -12,6 +12,7 @@
     "discord": "^0.8.2",
     "discord.js": "^11.2.1",
     "fs": "0.0.1-security",
+    "mocha": "^4.0.1",
     "mongoose": "^4.12.0",
     "opusscript": "0.0.3",
     "rivescript": "^1.17.2",
