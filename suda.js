@@ -4,6 +4,8 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const mongoose = require('mongoose');
 
+mongoose.Promise = global.Promise;
+
 const RiveScript = require('rivescript');
 const bot = new RiveScript();
 
@@ -18,19 +20,6 @@ mongoose.connection.once('open', () => {
   console.log(err);
 
 });
-
-
-/*let sudaSchema = new mongoose.Schema({
-
-    userID: Number,
-    musics: [{
-        plName: String,
-        music: [{link: String, title: String}],
-    }]
-
-});
-
-let Suda = mongoose.model('Suda', sudaSchema);*/
 
 let msg = new Message();
 
@@ -65,11 +54,8 @@ client.on('ready', function(){
 
 client.on('message', function(message){
 
-
-      /*sudaMusic.sudaMusic(message);
-      sudaPlaylist.recog(message);
-      */
       msg.sortMessage(message);
+
   });
 
 function fileRead(){
@@ -85,9 +71,7 @@ function fileError(error){
 
     }
 
-
-module.exports.Suda = Suda;
 module.exports.bot = bot;
 
 
-client.login('Your bot token');
+client.login('your bot token');

@@ -11,7 +11,6 @@ const MusicSchema = new Schema({
 const PlaylistSchema = new Schema({
 
   plName: String,
-  playlistID: Number,
   musics: [MusicSchema]
 
 })

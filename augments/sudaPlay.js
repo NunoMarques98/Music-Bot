@@ -14,9 +14,9 @@ module.exports = class SudaPlay {
 
     if(true){
 
-      let message_parts = message.content.split(" ");
+      let message_parts = message.content.split(" ")[1];
 
-      let music = message_parts[1].replace("'", '"');
+      let music = message_parts.replace("'", '"');
 
       this.queue.push(music);
 
@@ -24,7 +24,19 @@ module.exports = class SudaPlay {
 
   };
 
+  enqueueFromPl(musicLinks){
+
+    musicLinks.forEach( (link) =>{
+
+      let linkQ = link.replace("'", '"');
+
+      this.queue.push(linkQ);
+    })
+  }
+
   selector(voiceChannel){
+
+    this.voiceChannel = voiceChannel;
 
     voiceChannel.join().then( (connection) => {
 

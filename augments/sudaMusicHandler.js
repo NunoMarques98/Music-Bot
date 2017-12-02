@@ -2,8 +2,6 @@ let suda = require('../suda.js');
 let SudaPlay = require('./sudaPlay.js');
 let SudaPlaylist = require('./sudaPlaylist.js');
 
-let ytdl = require('ytdl-core');
-
 module.exports = class SudaMusicHandler {
 
   constructor() {
@@ -49,7 +47,7 @@ module.exports = class SudaMusicHandler {
 
       case "!plRegister":
 
-        this.sudaPlaylist.register(message.member.id);
+        this.sudaPlaylist.register(message.member.id, message);
 
       break;
 
@@ -57,7 +55,7 @@ module.exports = class SudaMusicHandler {
 
         let plName = message.content.split(" ");
 
-        this.sudaPlaylist.createPl( message.member.id, plName[1], message);
+        this.sudaPlaylist.createPl(message.member.id, plName[1], message);
 
       break;
 
@@ -65,28 +63,49 @@ module.exports = class SudaMusicHandler {
 
         let songInfo = message.content.split(" ");
 
-        this.sudaPlaylist.addSongToPl( message.member.id, songInfo, message);
+        this.sudaPlaylist.addSongToPl(message.member.id, songInfo, message);
 
       break;
 
       case "!plPlay":
 
-        let messageInfo = message.content.split(" ");
+        let messageInfo = message.content.split(" ")[1];
 
-        let songList = this.sudaPlaylist.getPlSongs(message.member.id, messageInfo, message);
+        this.sudaPlaylist.getPlSongs(message.member.id, messageInfo, message).then( (links) =>{
 
+          this.suda.enqueueFromPl(links);
+
+          this.suda.selector(message.member.voiceChannel);
+        });
 
       break;
-      case "!plSkip":
-      break;
+
       case "!plListSongs":
+
+        let name = message.content.split(" ")[1];
+
+        this.sudaPlaylist.listPlSongs(message.member.id, name, message);
+
       break;
+
       case "!plRemove":
+
+        let plToRemove = message.content.split(" ")[1];
+
+        this.sudaPlaylist.removePl(message.member.id, plToRemove, message);
+
       break;
       case "!plListPl":
+
+        this.sudaPlaylist.listPl(message.member.id, message);
+
       break;
       case "!plRemoveSong":
 
+        let songToRemove = message.content.split(" ");
+
+        this.sudaPlaylist.removeSongFromPl(message.member.id, songToRemove[1], songToRemove[2], message);
+        
       break;
 
     }

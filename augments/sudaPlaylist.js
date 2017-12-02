@@ -1,4 +1,5 @@
-let SudaDB = require('../suda.js');
+let User = require('../models/playlistSchema');
+let ytdl = require('ytdl-core');
 
 module.exports = class SudaPlaylist {
 
@@ -8,11 +9,11 @@ module.exports = class SudaPlaylist {
 
   }
 
-  register(id) {
+  register(id, message){
 
-    SudaDB.Suda.find({userID: id}, function(err, data){
+    this.checkExistance(id, (result) => {
 
-        if(data.length == 0){
+        if(result){
 
           this.createUser(id);
 
@@ -21,15 +22,19 @@ module.exports = class SudaPlaylist {
         } else {
 
           message.reply(" you have already been registered!");
-
-        }
-
-    });
+      }
+    })
   }
 
-  createUser(id) {
+  createUser(id){
 
-    let user = new SudaDB.Suda({userID: id, musics: []});
+    let user = new User({
+
+      userID: id,
+      bans: 0,
+      playlists: []
+
+    });
 
     user.save( (err) => {
 
@@ -38,23 +43,52 @@ module.exports = class SudaPlaylist {
     });
   }
 
+  checkExistance(id, callback){
+
+    User.findOne({userID: id}).then( (data) =>{
+
+      callback(data === null);
+
+    })
+  }
+
   createPl(id, plName, member) {
 
-    if(message.length === 2){
+    this.checkExistance(id, (result) =>{
 
-        suda.Suda.update({userID: id}, {$push : {musics: {plName: message[1], music: [] }}}, function(err){
+      if(!result){
 
-            if(err) throw err;
+        User.findOne({userID: id}).then( (data) => {
 
-        });
+              data.playlists.push({plName: plName, musics: []})
 
-        member.reply(" your playlist has been created!");
+              data.save().then( () => {
 
-    } else {
+                member.reply(" your playlist has been created!");
+          })
+        })
 
-        member.reply(" you should include a name. For example !plAdd name");
+      } else {
 
-    }
+        member.reply(" you should register first!");
+      }
+    })
+      //member.reply(" you should include a name. For example !plAdd name");
+  }
+
+  removePl(id, plName, member){
+
+    User.findOne({userID: id}).then( (data) => {
+
+          let index = this.getIndex(data, plName);
+
+          data.playlists.splice(index, 1);
+
+          data.save().then( () => {
+
+            member.reply(" your playlist has been removed!");
+      })
+    })
   }
 
   addSongToPl(id, songInfo, member) {
@@ -62,52 +96,135 @@ module.exports = class SudaPlaylist {
     let plName = songInfo[1];
     let songLink = songInfo[2];
 
-    if ( songInfo.length === 3 ) {
+    ytdl.getInfo( songLink, (err, info) => {
 
-      ytdl.getInfo( songLink, (err, info) =>{
+      User.findOne({userID: id}).then( (data) => {
 
-        SudaBD.Suda.update( {'musics.plName': plName}, {'$push' : {'musics.$.music' : {link: songLink, title: info.title } }},
+        let index = this.getIndex(data, plName);
 
-          (callback) => {
+        data.playlists[index].musics.push({musicTitle: info.title, musicLink: songLink});
 
-          });
+        data.save().then( () => {
+
+            member.reply(`your song  has been added to ${plName}!`);
+
+        })
+      })
+    })
+      //member.reply(" you should include your playlist name and the url of the song to be added. For example ");
+  }
+
+  removeSongFromPl(id, plName, songID, member){
+
+    User.findOne({userID: id}).then( (data) => {
+
+      let index = this.getIndex(data, plName);
+
+      data.playlists[index].musics.splice(songID - 1, 1);
+
+      data.save().then( () => {
+
+          member.reply(`your song  has been removed from ${plName}!`);
+
+      })
+    })
+  }
+
+  getIndex(data, plName){
+
+    return( data.playlists.findIndex( (playlist) =>{
+
+        return playlist.plName === plName;
+
+    })
+  )}
+
+  getPlSongs(id, plName){
+
+    return new Promise( (resolve, reject) =>{
+
+      User.findOne({userID: id}).then( (data) =>{
+
+        let index = this.getIndex(data, plName);
+
+        let res = this.getLinks(data.playlists[index].musics);
+
+        resolve(res);
+
+      })
+    })
+  }
+
+  listPlSongs(id, plName, member){
+
+    User.findOne({userID: id}).then( (data) =>{
+
+      let index = this.getIndex(data, plName);
+
+      this.getPropertyName(data.playlists[index].musics).then( (names) =>{
+
+        let res = this.toMarkdown(names);
+
+        member.reply(res);
+
+      })
+    })
+  }
+
+  listPl(id, member){
+
+    User.findOne({userID: id}).then( (data) =>{
+
+        this.getPropertyName(data.playlists).then( (names) =>{
+
+            let res = this.toMarkdown(names);
+
+            member.reply(res);
+        })
+    })
+  }
+
+  getLinks(musics){
+
+    let res = [];
+
+    musics.forEach( (music) =>{
+
+      res.push(music.musicLink);
+    })
+
+    return res;
+  }
+
+  getPropertyName(object){
+
+    return new Promise( (resolve, reject) =>{
+
+      let names = [];
+
+      object.forEach( (list) =>{
+
+        list.plName !== undefined ? names.push(list.plName) : names.push(list.musicTitle);
 
       });
 
-      member.reply(`your song  has been added to ${songInfo[1]}!`);
+      resolve(names);
 
-    } else {
-
-      member.reply(" you should include your playlist name and the url of the song to be added. For example ");
-
-    }
+    })
   }
 
-  getPlSongs(id, plInfo, member){
+  toMarkdown(names){
 
-    /*let plName = plInfo[1];
+    let res = "```py\n";
 
-    SudaBD.Suda.find( {userID: id}, (err, data) => {
+    for (let i = 0; i < names.length; i++){
 
-       let elementMusics = [];
+      res += `[${i + 1}] ${names[i]}\n`;
+    }
 
-       data[0].musics.
+    res += "```";
 
-       data[0].musics.forEach( (element) => {
+    return res;
 
-          if(element.plName === plName){
-
-            for(let i = 0; i < element.music.length; i++){
-
-              elementMusics.push(element.music[i].link);
-
-            }
-
-            return elementMusics
-
-          };
-
-    }, this)
-  }*/
   }
 }
