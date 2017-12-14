@@ -105,7 +105,7 @@ module.exports = class SudaMusicHandler {
         let songToRemove = message.content.split(" ");
 
         this.sudaPlaylist.removeSongFromPl(message.member.id, songToRemove[1], songToRemove[2], message);
-        
+
       break;
 
     }
