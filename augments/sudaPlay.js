@@ -1,4 +1,6 @@
-let ytdl = require('ytdl-core');
+const ytdl = require('ytdl-core');
+const YouTube = require('simple-youtube-api');
+const youtube = new YouTube('AIzaSyCy3zVz5ifeL--w7hycaOESA5vUtqD7vVA');
 
 module.exports = class SudaPlay {
 
@@ -12,16 +14,24 @@ module.exports = class SudaPlay {
 
   enqueue(message){
 
-    if(true){
+    let url = message.content.slice(6);
 
-      let message_parts = message.content.split(" ")[1];
+    let music = url.replace("'", '"');
 
-      let music = message_parts.replace("'", '"');
+    console.log(music);
+
+    if(url.match(/^https?:\/\/(www.youtube.com|youtube.com)/)){
 
       this.queue.push(music);
 
-    }
+    } else {
 
+      youtube.searchVideos(music, 1).then( (results) =>{
+
+        this.queue.push(`https://www.youtube.com/watch?v=${results[0].id}`);
+
+      })
+    }
   };
 
   enqueueFromPl(musicLinks){

@@ -1,64 +1,44 @@
+const ytdl = require('ytdl-core');
+const YouTube = require('simple-youtube-api');
+const youtube = new YouTube('AIzaSyCy3zVz5ifeL--w7hycaOESA5vUtqD7vVA');
+const SudaSecurity = require('../security/plSecurity');
+
 let User = require('../models/playlistSchema');
-let ytdl = require('ytdl-core');
 
 module.exports = class SudaPlaylist {
 
   constructor(sudaPlay) {
 
     this.suda = sudaPlay;
+    this.security = new SudaSecurity();
 
   }
 
   register(id, message){
 
-    this.checkExistance(id, (result) => {
+    this.security.checkExistance(id).then( (exist) => {
 
-        if(result){
+      if(exist){
 
-          this.createUser(id);
+        User.createUser(id);
 
-          message.reply(" you have been registered!");
+        message.reply(" you have been registered!");
 
-        } else {
+      } else {
 
-          message.reply(" you have already been registered!");
+        message.reply(" you have already been registered!");
+
       }
-    })
-  }
-
-  createUser(id){
-
-    let user = new User({
-
-      userID: id,
-      bans: 0,
-      playlists: []
-
-    });
-
-    user.save( (err) => {
-
-        if(err) throw err;
-
-    });
-  }
-
-  checkExistance(id, callback){
-
-    User.findOne({userID: id}).then( (data) =>{
-
-      callback(data === null);
-
-    })
+   })
   }
 
   createPl(id, plName, member) {
 
-    this.checkExistance(id, (result) =>{
+    this.security.checkExistanceAndName(id, plName).then( (data) => {
 
-      if(!result){
+      if(data.toAdd){
 
-        User.findOne({userID: id}).then( (data) => {
+        User.getUserById(id).then( (data) => {
 
               data.playlists.push({plName: plName, musics: []})
 
@@ -70,10 +50,10 @@ module.exports = class SudaPlaylist {
 
       } else {
 
-        member.reply(" you should register first!");
+        member.reply(data.msg);
+
       }
-    })
-      //member.reply(" you should include a name. For example !plAdd name");
+   })
   }
 
   removePl(id, plName, member){
@@ -93,16 +73,15 @@ module.exports = class SudaPlaylist {
 
   addSongToPl(id, songInfo, member) {
 
-    let plName = songInfo[1];
-    let songLink = songInfo[2];
+    let songData = { plName: songInfo[1], link: songInfo[2] };
 
-    ytdl.getInfo( songLink, (err, info) => {
+    ytdl.getInfo( songData.link, (err, info) => {
 
-      User.findOne({userID: id}).then( (data) => {
+      User.getUserById(id, (err, data) => {
 
-        let index = this.getIndex(data, plName);
+        let index = this.getIndex(data, songData.plName);
 
-        data.playlists[index].musics.push({musicTitle: info.title, musicLink: songLink});
+        data.playlists[index].musics.push({musicTitle: info.title, musicLink: songData.link});
 
         data.save().then( () => {
 
@@ -111,12 +90,11 @@ module.exports = class SudaPlaylist {
         })
       })
     })
-      //member.reply(" you should include your playlist name and the url of the song to be added. For example ");
   }
 
   removeSongFromPl(id, plName, songID, member){
 
-    User.findOne({userID: id}).then( (data) => {
+    User.getUserById(id, (err, data) => {
 
       let index = this.getIndex(data, plName);
 
@@ -157,7 +135,9 @@ module.exports = class SudaPlaylist {
 
   listPlSongs(id, plName, member){
 
-    User.findOne({userID: id}).then( (data) =>{
+    User.getUserById(id, (err, data) =>{
+
+      if (err) throw err;
 
       let index = this.getIndex(data, plName);
 
@@ -173,14 +153,14 @@ module.exports = class SudaPlaylist {
 
   listPl(id, member){
 
-    User.findOne({userID: id}).then( (data) =>{
+    User.getUserById(id, (err, data) =>{
 
         this.getPropertyName(data.playlists).then( (names) =>{
 
             let res = this.toMarkdown(names);
 
             member.reply(res);
-        })
+      })
     })
   }
 

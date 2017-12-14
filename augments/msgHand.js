@@ -2,6 +2,7 @@ let SudaBasics = require('./sudaBasics.js');
 let SudaTalk = require('./sudaTalk.js');
 let SudaPlaylist = require('./sudaPlaylist.js');
 let SudaMusicHandler = require('./sudaMusicHandler.js');
+let SudaSecurity = require('../security/msgSecurity');
 
 module.exports = class Message {
 
@@ -16,6 +17,7 @@ module.exports = class Message {
     this.sudaPlaylist = new SudaMusicHandler();
     this.sudaBasics = new SudaBasics();
     this.sudaTalk = new SudaTalk();
+    this.security = new SudaSecurity();
 
   }
 
@@ -25,6 +27,13 @@ module.exports = class Message {
 
     if(this.sudaKeywords.indexOf(msg[0]) != -1) {
 
+      if(message.member.voiceChannel === undefined){
+
+        message.reply(' you should be in a voice channel first!!');
+
+        return
+      }
+
       let keyWord = this.sudaKeywords.indexOf(msg[0]);
 
       this.sudaBasics.handler(this.sudaKeywords[keyWord], message, message.member.voiceChannel);
@@ -32,6 +41,13 @@ module.exports = class Message {
     }
 
     else if (this.playlistKeywords.indexOf(msg[0]) != -1) {
+
+      if(message.member.voiceChannel === undefined){
+
+        message.reply(' you should be in a voice channel first!!');
+
+        return
+      }
 
       let keyWord = this.playlistKeywords.indexOf(msg[0]);
 

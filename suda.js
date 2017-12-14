@@ -23,19 +23,16 @@ mongoose.connection.once('open', () => {
 
 let msg = new Message();
 
-let sudaMusic = require('./augments/sudaMusic');
-let sudaPlaylist = require('./augments/playlist');
-
 client.on('ready', function(){
 
-      let textChannel = client.channels.get('301448602092437505');
+      /*let textChannel = client.channels.get('301448602092437505');
 
-     /* channel = client.channels.find('name', 'Ordis');
+      channel = client.channels.find('name', 'Ordis');
       textChannel.send(":diamonds: What are you curious about? :diamonds:");*/
 
       bot.loadFile('./sudaIntel.rive', fileRead, fileError );
 
-      for(let i = 0; i< 111; i++){
+      /*for(let i = 0; i< 111; i++){
 
         let quo = Math.floor(i%10);
 
@@ -47,7 +44,7 @@ client.on('ready', function(){
 
         textChannel.setTopic(str);
 
-    }
+    }*/
 
 })
 
@@ -74,4 +71,4 @@ function fileError(error){
 module.exports.bot = bot;
 
 
-client.login('your bot token');
+client.login('MzYwOTYzNDAwNzgxNzkxMjQz.DKdQtg.1uBNlipi6-B9l7GvI4nPVTYGf6M');

@@ -26,3 +26,50 @@ const UserSchema = new Schema({
 const User = mongoose.model('user', UserSchema);
 
 module.exports = User;
+
+module.exports.getUserById = (id, callback) => {
+
+  const query = {userID: id};
+
+  return new Promise( (resolve, reject) => {
+
+    User.findOne(query).then( (data) => {
+
+      resolve(data);
+
+    })
+  })
+}
+
+module.exports.checkUser = (id) => {
+
+  const query = {userID: id};
+
+  return new Promise( (resolve, reject) => {
+
+    User.findOne(query).then( (data) => {
+
+      let info = {isInDB: data !== null, data: data};
+
+      resolve(info);
+
+    })
+  })
+}
+
+module.exports.createUser = (id) => {
+
+  let user = new User({
+
+    userID: id,
+    bans: 0,
+    playlists: []
+
+  });
+
+  user.save( (err) => {
+
+      if(err) throw err;
+
+  });
+}
