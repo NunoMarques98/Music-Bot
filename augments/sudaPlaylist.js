@@ -77,15 +77,17 @@ module.exports = class SudaPlaylist {
 
     ytdl.getInfo( songData.link, (err, info) => {
 
-      User.getUserById(id, (err, data) => {
+      User.getUserById(id, (data) => {
 
         let index = this.getIndex(data, songData.plName);
+
+        console.log(data.playlists[index]);
 
         data.playlists[index].musics.push({musicTitle: info.title, musicLink: songData.link});
 
         data.save().then( () => {
 
-            member.reply(`your song  has been added to ${plName}!`);
+            member.reply(`your song  has been added to ${songData.plName}!`);
 
         })
       })
@@ -94,7 +96,7 @@ module.exports = class SudaPlaylist {
 
   removeSongFromPl(id, plName, songID, member){
 
-    User.getUserById(id, (err, data) => {
+    User.getUserById(id, (data) => {
 
       let index = this.getIndex(data, plName);
 

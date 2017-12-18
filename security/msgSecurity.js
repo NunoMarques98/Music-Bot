@@ -6,9 +6,16 @@ module.exports = class SudaSecurity {
 
   }
 
-  /*checkVoiceChannel(message){
+  checkVoiceChannel(message){
 
-    if()
+    if(message.member.voiceChannel !== undefined){
 
-  }*/
+      return { pass: true, msg: null};
+
+    } else {
+
+      return { pass: false, msg: ' you should be in a voice channel first!!'}
+    }
+
+  }
 }

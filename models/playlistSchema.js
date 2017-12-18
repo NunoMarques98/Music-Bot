@@ -31,13 +31,10 @@ module.exports.getUserById = (id, callback) => {
 
   const query = {userID: id};
 
-  return new Promise( (resolve, reject) => {
+  User.findOne(query).then( (data) => {
 
-    User.findOne(query).then( (data) => {
+      callback(data);
 
-      resolve(data);
-
-    })
   })
 }
 

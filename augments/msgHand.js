@@ -27,9 +27,9 @@ module.exports = class Message {
 
     if(this.sudaKeywords.indexOf(msg[0]) != -1) {
 
-      if(message.member.voiceChannel === undefined){
+      if(!this.security.checkVoiceChannel(message).pass){
 
-        message.reply(' you should be in a voice channel first!!');
+        message.reply(msg);
 
         return
       }
@@ -42,9 +42,9 @@ module.exports = class Message {
 
     else if (this.playlistKeywords.indexOf(msg[0]) != -1) {
 
-      if(message.member.voiceChannel === undefined){
+      if(!this.security.checkVoiceChannel(message).pass){
 
-        message.reply(' you should be in a voice channel first!!');
+        message.reply(msg);
 
         return
       }

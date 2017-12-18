@@ -2,12 +2,14 @@ const ytdl = require('ytdl-core');
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube('AIzaSyCy3zVz5ifeL--w7hycaOESA5vUtqD7vVA');
 
+const Queue = require('../dataStructures/queue');
+
 module.exports = class SudaPlay {
 
   constructor() {
 
     this.dispatcher;
-    this.queue = [];
+    this.queue = new Queue();
     this.voiceChannel;
 
   }
@@ -18,17 +20,15 @@ module.exports = class SudaPlay {
 
     let music = url.replace("'", '"');
 
-    console.log(music);
-
     if(url.match(/^https?:\/\/(www.youtube.com|youtube.com)/)){
 
-      this.queue.push(music);
+      this.queue.enqueue(music);
 
     } else {
 
       youtube.searchVideos(music, 1).then( (results) =>{
 
-        this.queue.push(`https://www.youtube.com/watch?v=${results[0].id}`);
+        this.queue.enqueue(`https://www.youtube.com/watch?v=${results[0].id}`);
 
       })
     }
@@ -40,7 +40,7 @@ module.exports = class SudaPlay {
 
       let linkQ = link.replace("'", '"');
 
-      this.queue.push(linkQ);
+      this.queue.enqueue(linkQ);
     })
   }
 
@@ -64,7 +64,7 @@ module.exports = class SudaPlay {
 
   play(connection){
 
-    let musicToPlay = ytdl( this.queue[0], { filter: 'audioonly'});
+    let musicToPlay = ytdl( this.queue.front(), { filter: 'audioonly'});
 
     this.dispatcher = connection.playStream(musicToPlay);
 
@@ -72,19 +72,19 @@ module.exports = class SudaPlay {
 
   playing(){
 
-    return this.queue[0];
+    return this.queue.front();
   }
 
   handler(message){
 
     this.voiceChannel = message.member.voiceChannel;
 
-    if(this.queue.length == 0){
+    if(this.queue.isEmpty()){
 
       this.enqueue(message);
       this.selector(this.voiceChannel);
 
-    } else if (this.queue.length != 0) {
+    } else {
 
       this.enqueue(message);
 
@@ -99,9 +99,9 @@ module.exports = class SudaPlay {
 
   next(){
 
-    this.queue.shift();
+    this.queue.dequeue();
 
-    if(this.queue.length == 0){
+    if(this.queue.isEmpty()){
 
       this.voiceChannel.leave();
     }
