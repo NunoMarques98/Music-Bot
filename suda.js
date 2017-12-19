@@ -59,6 +59,7 @@ function fileRead(){
 
     console.log("Read successful");
     bot.sortReplies();
+    //comment
 
     }
 
