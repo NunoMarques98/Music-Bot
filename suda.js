@@ -71,4 +71,4 @@ function fileError(error){
 module.exports.bot = bot;
 
 
-client.login('MzYwOTYzNDAwNzgxNzkxMjQz.DKdQtg.1uBNlipi6-B9l7GvI4nPVTYGf6M');
+client.login('Your token');
